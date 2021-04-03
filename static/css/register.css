@@ -1,0 +1,23 @@
+body 
+{
+	margin: 0px;
+    background-color: lightblue;
+}
+div{
+    height: 7vh;
+    text-align: center;
+}
+label{
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 250px;
+    text-align: right;
+}
+.name{
+    margin-top: 25vh;
+}
+.submit :hover{
+    color: darkgrey;  
+    cursor: pointer; 
+}
