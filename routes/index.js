@@ -26,6 +26,30 @@ router.get('/logout',
     appController.logout
 );
 
+router.get(
+    "/create",
+    appController.ensureAuthenticated,
+    appController.ensureSeller, (req, res) => {
+    res.render('create', {
+        styles: ['simple-sidebar'],
+        libs: ['sidebar','create'],
+        user: req.user
+    })
+});
+
+
+router.get(
+    '/cart/:productID/:quantity',
+    appController.ensureAuthenticated,
+    appController.addToCart
+);
+
+router.get(
+    '/cart',
+    appController.ensureAuthenticated,
+    appController.getCart
+);
+
 router.post(
     '/register',
     appController.register
@@ -37,22 +61,21 @@ router.post(
 );
 
 router.post(
-    '/product',
+    '/create',
+    appController.ensureAuthenticated,
+    appController.ensureSeller,
     appController.listProducts
 );
-
+/*
 router.get( '/product', (req, res) => {
-    res.render('product', {
+    res.render('create', {
         user: req.user,
         styles: ['simple-sidebar','product'],
         libs: ['sidebar']
     })
 });
+*/
 
-router.post(
-    '/cart/:productId',
-    appController.addToCart
-);
 
 /*
 

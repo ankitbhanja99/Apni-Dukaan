@@ -13,10 +13,11 @@ function increment() {
  }
 
 
- async function addToCart() {
+function linkUpdater() {
     quantity = document.getElementById('quantity_input').value;
-    productId = document.getElementById('productId').value;
-    console.log(productId);
+    productID = document.getElementById('productID').value;
+    document.getElementById("addCartLink").href = "/cart/"+productID+"/"+quantity;
+    /*console.log(productID);
     const data = { quantity };
     const options = {
         method: 'POST',
@@ -25,10 +26,10 @@ function increment() {
         },
         body: JSON.stringify(data)
     };
-    const res = await fetch('/cart/'+productId, options);
+    const res = await fetch('/cart/'+productID, options);
     const json = await res.json();
     console.log(res);
-    /* if(success_msg != ''){
+     if(success_msg != ''){
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             success_msg
             <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -38,3 +39,5 @@ function increment() {
 
     }*/
  }
+
+var myVar = setInterval(linkUpdater, 500);

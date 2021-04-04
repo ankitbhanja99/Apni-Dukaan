@@ -26,10 +26,6 @@ const userSchema = mongoose.Schema({
     type: String,
     required: true
   },
-  cart: {
-    type: Array,
-    default: new Array(1)
-  },
   password: {
     type: String,
     required: true

@@ -8,6 +8,7 @@ const mongoose  = require('mongoose');
 const toID = mongoose.Types.ObjectId
 const { post } = require('../routes');
 const { response } = require('express');
+const e = require('express');
 
 require('dotenv').config({ path: '.env' });
 
@@ -93,7 +94,29 @@ exports.getAllProducts = async (req, res) => {
   const products = await Product.find({})
       .limit(100)
       .sort({ createdAt: -1 });
-
+  if (req.user != undefined) {
+    const cart = await Cart.findOne({userID: req.user.id});
+    if (cart != null){
+      res.render('home', {
+        title: "Home",
+        small: "For All Types Of Products",
+        styles: ['simple-sidebar'],
+        products: products,
+        cartItems: cart.orderItems,
+        libs: ['sidebar'],
+        user: req.user
+      })
+    } else {
+      res.render('home', {
+        title: "Home",
+        small: "For All Types Of Products",
+        styles: ['simple-sidebar'],
+        products: products,
+        libs: ['sidebar'],
+        user: req.user
+      })
+    }
+  } else {
   res.render('home', {
       title: "Home",
       small: "For All Types Of Products",
@@ -101,27 +124,38 @@ exports.getAllProducts = async (req, res) => {
       products: products,
       libs: ['sidebar'],
       user: req.user
-  })
+  })}
 };
+
+
+
+
 
 exports.getProduct = async (req, res,) => {
   try {
     const product = await Product.findOne({_id: req.params.id});
-    console.log(product);
-    //const comments = await Comment.find({postID: req.params.id})
-    //.sort({ createdAt: -1 });
-    res.render('product', {
-      styles: ['simple-sidebar','product'],
-      product: product,
-      //comments: comments,
-      libs: ['sidebar', 'product'],
-      user: req.user
-    })
+    const cart = await Cart.findOne({userID: req.user.id});
+    if (cart != null){
+      res.render('product', {
+        styles: ['simple-sidebar','product'],
+        product: product,
+        libs: ['sidebar', 'product'],
+        user: req.user,
+        cartItems: cart.orderItems
+      })
+    } else {
+      res.render('product', {
+        styles: ['simple-sidebar','product'],
+        product: product,
+        libs: ['sidebar', 'product'],
+        user: req.user
+      })
+    }
   } catch (error) {
     console.log(error);
     req.flash(
       'error_msg',
-      'The post doesn\'t exist'
+      'The product doesn\'t exist'
     );
     res.redirect('/home');
   }
@@ -132,27 +166,27 @@ exports.listProducts = async (req, res) => {
   const {
     name,
     description,
-    price,
     category,
-    soldBy
   } = req.body;
 
+  const price = Number(req.body.price);
+  const sellerID = toID(req.user.id);
   const newProduct = new Product({
     name,
     description,
     price,
     category,
-    soldBy
+    sellerID
   });
 
   newProduct.save()
-  /*.then( products => {
+  .then( products => {
     req.flash(
       'success_msg',
-      'The post was created successfully'
+      'The product has been listed successfully'
     );
-    res.redirect('/create');
-  })*/
+    res.redirect('/home');
+  })
   .catch(err => console.log(err));
 };
 
@@ -171,25 +205,55 @@ exports.forwardAuthenticated = (req, res, next) => {
   res.redirect('/home');      
 };
 
-exports.addToCart = async (req, res) => {
-  console.log(req);
-  const productID = toID(req.params.productId);
-  const quantity = Number(req.body.quantity);
-  const userID = toID(req.user.id);
-  console.log(productID);
-  console.log(typeof quantity);
-  console.log(userID);
-    
+exports.ensureSeller = async (req, res, next) => {
   
+  if (req.user.accType == 'seller') {
+    return next();
+  }
+  req.flash('error_msg', 'You need a seller account to access this section');
+  res.redirect('/home');
+};
+
+exports.addToCart = async (req, res) => {
+  const productID = toID(req.params.productID);
+  const quantity = Number(req.params.quantity);
+  const userID = toID(req.user.id);    
+  const product = await Product.findById(productID);
+  console.log(product);
+  const name = product.name;
+  const price = product.price;
   const cart = await Cart.findOne({userID: userID});
-  console.log(cart)
+  
   if (cart) {
-    console.log(cart);
+    if (cart.orderItems.some(item => item.productID.toString().includes(productID))) {
+      const pos = cart.orderItems.map(item => {return item.productID.toString()}).indexOf(productID);
+      cart.orderItems[pos].quantity += quantity;
+      Cart.findByIdAndUpdate(cart._id,
+        { $set: {
+          orderItems: cart.orderItems
+          }
+      })
+      .catch(err => console.log(err));
+    } else {
+
+      cart.orderItems.push({productID, name, price, quantity});
+  
+      Cart.findByIdAndUpdate(cart._id,
+        { $set: {
+          orderItems: cart.orderItems
+          }
+      })
+      .catch(err => console.log(err));
+
+    }
+
   } else {
     const newCart = new Cart({
       userID,
       orderItems:[{
         productID,
+        name,
+        price,
         quantity
     }],
     });
@@ -198,12 +262,39 @@ exports.addToCart = async (req, res) => {
     /*res.json({
       success_msg: 'The item was added to cart successfully'
     });*/
-    req.flash(
-      'success_msg',
-      'The item was added to cart successfully'
-    );
-    res.redirect('/product/'+productId);
+    
   };
+
+  req.flash(
+    'success_msg',
+    'The item was added to cart successfully'
+  );
+  res.redirect('/product/'+productID);
+};
+
+exports.getCart = async (req, res) => {
+  
+  const userID = toID(req.user.id);   
+  const cart = await Cart.findOne({userID: userID}).catch(err => console.log(err));
+  if (cart) {
+    res.render('cart', {
+      styles: ['simple-sidebar'],
+      cartItems: cart.orderItems,
+      libs: ['sidebar'],
+      user: req.user
+    })
+  } else {
+    res.render('cart', {
+      styles: ['simple-sidebar'],
+      libs: ['sidebar'],
+      user: req.user
+    })
+  }
+
+  /*for (item in cart.orderItems) {
+    const a = Cart.findOne()item.populate('productID', 'name price'));
+  }*/
+};
 
 
   /*Product.findByIdAndUpdate(user,
@@ -216,11 +307,11 @@ exports.addToCart = async (req, res) => {
       'success_msg',
       'The item was added to cart successfully'
     );
-    res.redirect('/product/'+productId);
+    res.redirect('/product/'+productID);
   })
   .catch(err => console.log(err));
   */
-};
+
 
 /*
 exports.getAllPosts = async (req, res) => { 

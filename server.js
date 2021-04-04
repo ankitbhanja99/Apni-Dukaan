@@ -1,15 +1,28 @@
 const path = require('path');
 const flash = require('connect-flash');
 const express = require('express');
-const app = express();
-const bodyParser = require('body-parser');
-const routes = require('./routes');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const expressEjsLayout = require('express-ejs-layouts')
 require('dotenv').config({ path: '.env' });
 require('./config/passport')(passport);
+const app = express();
+const bodyParser = require('body-parser');
+
+mongoose.connect(process.env.DATABASE, {useNewUrlParser: true, useUnifiedTopology : true, useFindAndModify: false})
+.then(() => console.log('connected to MongoDB'))
+.catch('error', (err) => {
+  console.log(err.message);
+});
+
+
+
+const Product = require("./models/Product");
+const User = require("./models/User");
+const Cart = require("./models/Cart");
+const routes = require('./routes');
+
 
 // HelmetJS
 const helmet = require('helmet');
@@ -30,11 +43,6 @@ app.use(
   })
 );
 
-mongoose.connect(process.env.DATABASE, {useNewUrlParser: true, useUnifiedTopology : true}, { useFindAndModify: false})
-.then(() => console.log('connected to MongoDB'))
-.catch('error', (err) => {
-  console.log(err.message);
-});
 
 
 app.use(passport.initialize());

@@ -68,27 +68,39 @@
                     <form action="/create" method="POST">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                            <span class="input-group-text" id="title">Title</span>
+                            <span class="input-group-text" id="name">Product Name</span>
                             </div>
-                            <input type="title" class="form-control" id='title' name='title' aria-label="Enter Title"
-                            value="<%= typeof title != 'undefined' ? title : '' %>"/>
+                            <input type="name" class="form-control" id='name' name='name' aria-label="Enter Product Name"
+                            value="<%= typeof name != 'undefined' ? name : '' %>"/>
                         </div>
 
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                            <label class="input-group-text" for="category">Category</label>
+                            <label class="input-group-text" for="category">Product Category</label>
                             </div>
-                            <select class="custom-select" id="category" name="category" aria-label="Select Category">
+                            <select class="custom-select" id="category" name="category" aria-label="Select Product Category">
                               <option hidden disabled selected value>Choose a Category</option>
-                              <option value="Tutorials">Tutorial</option>
-                              <option value="Fiction">Fiction</option>
-                              <option value="Poems">Poem</option>
-                              <option value="Articles">Article</option>
+                              <option value="electronics">Electronics</option>
+                              <option value="books">Books</option>
+                              <option value="games">Games</option>
+                              <option value="fashion">Fashion</option>
+                              <option value="others">Others</option>
                             </select>
                         </div>
 
+                        <div class="input-group mb-3">
+                          <div class="input-group-prepend">
+                            <span class="input-group-text">₹</span>
+                          </div>
+                          <input type="price" id="price" name="price" class="form-control" aria-label="Price of the product(in nearest Rs.)">
+                          <div class="input-group-append">
+                            <span class="input-group-text">.00</span>
+                          </div>
+                        </div>
+
                         <div class="form-group">
-                            <textarea type="postBody" class="form-control" id="postBody" name="postBody" rows="10" aria-label="Enter Text"><%= typeof postBody != 'undefined' ? postBody : '' %></textarea>
+                            <label for="description">Product Description</label>
+                            <textarea type="description" class="form-control" id="description" name="description" rows="10" aria-label="Enter Text"><%= typeof description != 'undefined' ? description : '' %></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </form>
@@ -104,10 +116,10 @@
 
             </div>
 
-            <!-- Sidebar Widgets Column -->
+            <!-- Sidebar Widgets Column 
             <div class="col-md-4">
 
-                <!-- Search Widget -->
+                
                 <div class="card my-4">
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
@@ -120,7 +132,7 @@
                 </div>
                 </div>
 
-                <!-- Categories Widget -->
+                
                 <div class="card my-4">
                 <h5 class="card-header">Categories</h5>
                 <div class="card-body">
@@ -155,19 +167,20 @@
                 </div>
                 </div>
 
-                <!-- Side Widget -->
+                
                 <div class="card my-4">
                   <h5 class="card-header">Side Widget</h5>
                   <div class="card-body embed-responsive embed-responsive-16by9">
                     <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/L72fhGm1tfE?rel=0" allowfullscreen></iframe>
-                    <!--div class="embed-responsive embed-responsive-16by9">
-                    </div-->
+                    
+                    </div
                   </div>
                   </div>
 
             </div>
-
-            </div>
+            -->
+            
+          </div>
             <!-- /.row -->
         </div>
         <!-- /.container -->

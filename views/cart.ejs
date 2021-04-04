@@ -54,42 +54,55 @@
             <div class="row">
 
             <!-- Blog Entries Column -->
-            <div class="col-md-8">
+            <div class="col-md-10">
 
-                <h1 class="my-4">Edit Post
+                <h1 class="my-4">Cart
                 <!-- small>Create your own posts here</small -->
                 </h1>
+                
+                <hr>
+                <%- include ('partials/messages') %>
 
-
-
-
-
-                <div class="card card-body">
-                    <%- include ('partials/messages') %>
-                    <form action="/edit/<%= postID %> " method="POST">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                            <span class="input-group-text" id="title">Title</span>
+                <% if (cartItems != 'undefined') { %>
+                   
+                    <% if (cartItems.length > 0) { %>
+                      <% for (let item of cartItems) { %>
+                          <div class="card mb-4 flex-row flex-wrap">
+                              <div class="card-header border-0">
+                                  <a href="/product/<%= item.productID %>">
+                                      <img class="d-flex  rounded-circle" src="http://placehold.it/60x60" alt="Product Image">
+                                  </a>
+                              </div>
+                            <div class="card-block px-2">
+                              <!-- div class="media mb-4" >
+                                <img class="d-flex mr-3 rounded-circle" src="https://picsum.photos/seed//50" alt="User Image">
+                                < div class="media-body" -->
+                                  <h4 class="card-title mt-2" style="word-wrap:break-word"><a href="/product/<%= item.productID %>"><%= item.name %></a></h4>
+                                  <h5 class="mb-3"><span class="badge badge-info">₹ <%= item.price %>/-</span> <span class="badge badge-info ml-2">Quantity: <%= item.quantity %> </span><span class="badge badge-info ml-2">Total: ₹ <%= Number(item.quantity)*Number(item.price) %> </span></h5>
+                                  <h4 class="mr-3"></h3>
+                                <!-- /div>
+                              </div -->
                             </div>
-                            <input type="title" class="form-control" id='title' name='title' aria-label="Enter Title"
-                            value="<%= typeof title != 'undefined' ? title : '' %>"/>
-                        </div>
+                          </div>
+                      <% } %>
+                      <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary">Total Amount: ₹ 
+                        <% let total = 0 %>
+                        <% for (let item of cartItems) { %>
+                          <% total += Number(item.price)*Number(item.quantity) %>
+                        <% } %>
+                        <%= total %> 
+                        </button>
+                      </div>
+                  <% } %>
+                  
+                
+                <% } else { %>
 
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                            <label class="input-group-text" for="category">Category</label>
-                            </div>
-                            <select class="custom-select" id="category" name="category" aria-label="Select Category" disabled>
-                              <option value=""><%= category %></option>
-                            </select>
-                        </div>
+                  <h1 class="display-4 text-muted">This place looks empty!</h1>
 
-                        <div class="form-group">
-                            <textarea type="postBody" class="form-control" id="postBody" name="postBody" rows="10" aria-label="Enter Text"><%= typeof postBody != 'undefined' ? postBody : '' %></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </form>
-                </div>
+                <% } %>
+                
 
 
 
@@ -101,10 +114,9 @@
 
             </div>
 
-            <!-- Sidebar Widgets Column -->
+            <!-- Sidebar Widgets Column 
             <div class="col-md-4">
 
-                <!-- Search Widget -->
                 <div class="card my-4">
                 <h5 class="card-header">Search</h5>
                 <div class="card-body">
@@ -117,7 +129,6 @@
                 </div>
                 </div>
 
-                <!-- Categories Widget -->
                 <div class="card my-4">
                 <h5 class="card-header">Categories</h5>
                 <div class="card-body">
@@ -152,7 +163,6 @@
                 </div>
                 </div>
 
-                <!-- Side Widget -->
                 <div class="card my-4">
                   <h5 class="card-header">Side Widget</h5>
                   <div class="card-body">
@@ -162,7 +172,7 @@
                   </div>
                 </div>
 
-            </div>
+            </div -->
 
             </div>
             <!-- /.row -->
