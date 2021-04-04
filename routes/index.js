@@ -2,6 +2,9 @@ const router = require('express').Router();
 const appController = require('../controllers/appController');
 
 
+router.get('/', (req,res) => {
+    res.redirect('/home')
+});
 
 
 router.get('/register',
